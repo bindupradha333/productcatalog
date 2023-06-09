@@ -35,7 +35,7 @@ pipeline {
         stage ('MVN Build') {
           	steps {
 				
-				sh "mvn -DskipTests=true clean package"
+				
 				
 				// Run the docker build command and tag the image with the git commit ID
 				sh 'docker build -t product-catalogue .'
