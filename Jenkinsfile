@@ -21,16 +21,12 @@ pipeline {
     
 
 
-    stages {
-
-        /* This stage runs pre-build tasks, such as loading variables or outputing start notifications
-         */
-		 
-        stage ('Pre-Build') {
-            steps {
-                notifyBuildStart()
-            }
-        }
+     stages {
+    stage('Clone repository') {
+      steps {
+        git 'https://github.com/bindupradha333/productcatalog/'
+      }
+    }
 		
 		/* In this stage, the code is being built/compiled, and the Docker image is being created and tagged.
          * Tests shouldn't been run in this stage, in order to speed up time to deployment.
