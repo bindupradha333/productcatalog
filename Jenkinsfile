@@ -94,10 +94,7 @@ pipeline {
 						echo 'Starting SonarQube scan...'
 
 						// Run your unit tests and prepare SonarQube output
-						 {
-				            
-				            sh "mvn -X org.jacoco:jacoco-maven-plugin:prepare-agent "
-				            }
+						 
 						sonarScan(sonarServer: 'Sonar', properties:'''
                             				mvn clean verify sonarsonar 
                                            -Dsonar.projectKey=product-catalogue 
