@@ -15,10 +15,7 @@ pipeline {
      */
     
 	
-    tools {
-        maven 'Maven-3.3.1'
-        jdk 'JDK1.8.0'
-    }
+    
        
     
     
@@ -45,7 +42,7 @@ pipeline {
 				sh "mvn -DskipTests=true clean package"
 				
 				// Run the docker build command and tag the image with the git commit ID
-				dockerBuild(buildArgs: ["ARTIFACT_NAME": sh(returnStdout: true, script: "find target -name *.jar | tr -d '\n'")])
+				sh 'docker build -t product-catalogue .'
 				
             }
 
