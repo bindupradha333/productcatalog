@@ -1,19 +1,22 @@
-node {
-    def gitUrl = 'https://github.com/productcatalog.git'
-    stage('Initialize') {
-        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: gitUrl]]])
-        sh 'docker pull product-catalog'
+pipeline {
+  agent any
+  stages {
+    stage('Clone repository') {
+      steps {
+        git 'https://github.com/bindupradha333/productcatalog/'
+      }
     }
-    stage('Build and Deploy') {
-        withCredentials([usernamePassword(credentialsId: 'docker login "index.docker.io" -u bindupradha -p dckr_pat__gmjmLfwYmSqX5h22Cs045Kx0Cs', passwordVariable: 'Srirama1209@', usernameVariable: 'bindupradha')]) {
-            docker.withRegistry('https://registry.hub.docker.com', 'docker login "index.docker.io" -u bindupradha -p dckr_pat__gmjmLfwYmSqX5h22Cs045Kx0Cs') {
-                def dockerImage = docker.image('product-catalog:1.0.0')
-                sh 'mvn clean package'
-                dockerImage.push()
-                 'kubectl create -f deployment.yaml'
-                 'kubectl create -f service.yaml'
-                 'kubectl create -f ingress.yaml'
-            }
-        }
+    stage('Build Docker image') {
+      steps {
+        sh 'docker build -t product-catalogue .'
+      }
     }
+    stage('Deploy to Kubernetes') {
+      steps {
+        sh 'kubectl apply -f kubernetes/deployment.yaml'
+        sh 'kubectl apply -f kubernetes/service.yaml'
+        sh 'kubectl apply -f kubernetes/ingress.yaml'
+      }
+    }
+  }
 }
