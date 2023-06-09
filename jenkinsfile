@@ -10,9 +10,9 @@ node {
                 def dockerImage = docker.image('product-catalog:1.0.0')
                 sh 'mvn clean package'
                 dockerImage.push()
-                sh 'kubectl create -f deployment.yaml'
-                sh 'kubectl create -f service.yaml'
-                sh 'kubectl create -f ingress.yaml'
+                 'kubectl create -f deployment.yaml'
+                 'kubectl create -f service.yaml'
+                 'kubectl create -f ingress.yaml'
             }
         }
     }
