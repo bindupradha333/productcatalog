@@ -4,5 +4,5 @@ WORKDIR /app
 
 
 
-EXPOSE 8080
+EXPOSE 7080
 ENTRYPOINT ["java", "-jar", "app.jar"]
