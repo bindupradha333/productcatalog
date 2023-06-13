@@ -1,32 +1,34 @@
 pipeline {
     agent any
-
     stages {
-        stage("Build") {
+        stage('Build and Push Docker Image') {
             steps {
-                sh "mvn clean package"
+                sh 'mvn clean package'
+                script {
+                    docker.withRegistry('https://http://hub.docker.com') {
+                        def app = docker.build("taniaduggal60/productcatalogue1")
+                        app.push("latest")
+                    }
+                }
             }
         }
-
-        stage("Docker build") {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh "docker build -t taniaduggal60/productcatalogue1:latest ."
-            }
-        }
+                script {
+                    def kubeconfig = readFile("${env.HOME}/.kube/config")
+                    writeFile file: "${env.WORKSPACE}/kubeconfig", text: kubeconfig
+                    withKubeConfig([credentialsId: 'kubeconfig-credentials', kubeconfigFile: "${env.WORKSPACE}/kubeconfig", serverUrl: 'https://my-kubernetes-cluster']) {
 
-        stage("Docker push") {
-            steps {
-                sh "docker push productcatalogue1:latest"
-            }
-        }
+                        sh 'kubectl apply -f deployment.yaml'
+                        sh 'kubectl apply -f service.yaml'
 
-        stage("Deploy to Kubernetes") {
-            steps {
-                sh """
-                kubectl set image deployment.yaml \
-                5a4a6af524e100f1422992a904bd079305515308203179ac2fbf5120ef1b630a=taniaduggal60/productcatalogue1:latest \
-                --record=true
-                """
+                        timeout(time: 5, unit: 'MINUTES') {
+                            sh 'kubectl rollout status deployment/my-deployment'
+                        }
+
+                        sh 'kubectl get services'
+                    }
+                }
             }
         }
     }
