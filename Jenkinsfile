@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build and Push Docker Image') {
             steps {
-                sh 'mvn clean package'
+                
                 script {
                     docker.withRegistry('https://http://hub.docker.com') {
                         def app = docker.build("taniaduggal60/productcatalogue1")
