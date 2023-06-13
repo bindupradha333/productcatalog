@@ -7,7 +7,7 @@ info:
 servers:
 - url: https://virtserver.swaggerhub.com/techdozo5/product-catalog/1.0.0
   description: SwaggerHub API Auto Mocking
-- url: localhost:8080
+- url: localhost:7080
   description: local
 tags:
 - name: Seller
